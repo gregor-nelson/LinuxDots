@@ -1,0 +1,272 @@
+# ============================================
+#  OneDarkCustom — GTK 2 Theme
+#  Based on custom One Dark terminal palette
+# ============================================
+
+gtk-color-scheme = "bg_color:#1E222A\nfg_color:#ABB2BF\nbase_color:#282C34\ntext_color:#ABB2BF\nselected_bg_color:#61AFEF\nselected_fg_color:#1E222A\ntooltip_bg_color:#181B21\ntooltip_fg_color:#ABB2BF\nlink_color:#61AFEF"
+
+style "default" {
+    xthickness = 1
+    ythickness = 1
+
+    GtkWidget::focus-line-width = 1
+    GtkWidget::focus-padding = 0
+    GtkWidget::interior-focus = 1
+
+    GtkButton::child-displacement-x = 0
+    GtkButton::child-displacement-y = 0
+    GtkButton::default-border = { 0, 0, 0, 0 }
+
+    GtkScrollbar::min-slider-length = 40
+    GtkScrollbar::slider-width = 8
+    GtkScrollbar::trough-border = 0
+    GtkScrollbar::has-backward-stepper = 0
+    GtkScrollbar::has-forward-stepper = 0
+
+    GtkMenuBar::shadow-type = GTK_SHADOW_NONE
+    GtkToolbar::shadow-type = GTK_SHADOW_NONE
+    GtkMenuBar::internal-padding = 0
+    GtkMenu::horizontal-padding = 0
+    GtkMenu::vertical-padding = 4
+
+    GtkCheckButton::indicator-size = 16
+    GtkRadioButton::indicator-size = 16
+
+    GtkEntry::honors-transparent-bg-hint = 1
+    GtkEntry::progress-border = { 0, 0, 0, 0 }
+
+    GtkExpander::expander-size = 14
+    GtkTreeView::expander-size = 14
+    GtkTreeView::vertical-separator = 0
+
+    GtkNotebook::tab-overlap = -1
+
+    GtkRange::trough-border = 0
+    GtkRange::slider-width = 16
+    GtkRange::stepper-size = 0
+
+    GtkScale::slider-length = 16
+    GtkScale::slider-width = 16
+    GtkScale::trough-side-details = 1
+
+    bg[NORMAL]        = @bg_color
+    bg[PRELIGHT]      = "#2C313A"
+    bg[SELECTED]      = @selected_bg_color
+    bg[INSENSITIVE]   = @bg_color
+    bg[ACTIVE]        = "#333842"
+
+    fg[NORMAL]        = @fg_color
+    fg[PRELIGHT]      = "#D4D8DF"
+    fg[SELECTED]      = @selected_fg_color
+    fg[INSENSITIVE]   = "#6B7280"
+    fg[ACTIVE]        = @fg_color
+
+    base[NORMAL]      = @base_color
+    base[PRELIGHT]    = "#2C313A"
+    base[SELECTED]    = @selected_bg_color
+    base[INSENSITIVE] = @bg_color
+    base[ACTIVE]      = @selected_bg_color
+
+    text[NORMAL]      = @text_color
+    text[PRELIGHT]    = "#D4D8DF"
+    text[SELECTED]    = @selected_fg_color
+    text[INSENSITIVE] = "#6B7280"
+    text[ACTIVE]      = @selected_fg_color
+
+    engine "murrine" {
+        animation           = TRUE
+        colorize_scrollbar  = FALSE
+        contrast            = 0.8
+        default_button_color = "#61AFEF"
+        focusstyle          = 3
+        glazestyle          = 0
+        glow_shade          = 1.0
+        glowstyle           = 0
+        gradient_shades     = { 1.0, 1.0, 1.0, 1.0 }
+        highlight_shade     = 1.0
+        lightborder_shade   = 1.0
+        lightborderstyle    = 1
+        listviewheaderstyle = 0
+        listviewstyle       = 2
+        menubaritemstyle    = 0
+        menubarstyle        = 0
+        menuitemstyle       = 0
+        menustyle           = 0
+        progressbarstyle    = 0
+        reliefstyle         = 0
+        rgba                = TRUE
+        roundness           = 4
+        scrollbarstyle      = 0
+        separatorstyle      = 1
+        shadow_shades       = { 0.8, 2.2 }
+        sliderstyle         = 0
+        stepperstyle        = 1
+        toolbarstyle        = 2
+        trough_shades       = { 0.85, 1.0 }
+    }
+}
+
+style "wide" {
+    xthickness = 2
+    ythickness = 2
+}
+
+style "wider" {
+    xthickness = 3
+    ythickness = 3
+}
+
+style "button" = "wider" {
+    bg[NORMAL]      = "#282C34"
+    bg[PRELIGHT]    = "#2C313A"
+    bg[ACTIVE]      = "#333842"
+    bg[INSENSITIVE] = "#282C34"
+
+    engine "murrine" {
+        roundness = 6
+        border_shades = { 0.9, 0.9 }
+    }
+}
+
+style "entry" = "wider" {
+    bg[NORMAL]   = "#181B21"
+    base[NORMAL] = "#181B21"
+
+    engine "murrine" {
+        roundness = 6
+        border_shades = { 0.8, 0.8 }
+    }
+}
+
+style "notebook" {
+    bg[NORMAL]   = @bg_color
+    bg[ACTIVE]   = "#181B21"
+    bg[SELECTED] = @selected_bg_color
+    fg[ACTIVE]   = "#6B7280"
+
+    engine "murrine" {
+        roundness = 6
+    }
+}
+
+style "menu" {
+    bg[NORMAL] = "#282C34"
+
+    engine "murrine" {
+        roundness = 4
+    }
+}
+
+style "menubar" {
+    bg[NORMAL] = "#181B21"
+    fg[NORMAL] = @fg_color
+}
+
+style "menuitem" {
+    bg[PRELIGHT]  = @selected_bg_color
+    fg[PRELIGHT]  = @selected_fg_color
+    xthickness = 4
+    ythickness = 3
+
+    engine "murrine" {
+        roundness = 4
+    }
+}
+
+style "toolbar" {
+    bg[NORMAL] = "#282C34"
+}
+
+style "tooltip" {
+    bg[NORMAL] = @tooltip_bg_color
+    fg[NORMAL] = @tooltip_fg_color
+    xthickness = 6
+    ythickness = 4
+
+    engine "murrine" {
+        roundness = 6
+    }
+}
+
+style "treeview-header" = "button" {
+    bg[NORMAL]   = "#282C34"
+    bg[PRELIGHT] = "#2C313A"
+    bg[ACTIVE]   = "#333842"
+
+    engine "murrine" {
+        roundness = 0
+    }
+}
+
+style "scrollbar" {
+    bg[NORMAL]   = "#2C313A"
+    bg[PRELIGHT] = "#3A3F4B"
+    bg[ACTIVE]   = "#333842"
+
+    engine "murrine" {
+        roundness = 100
+        colorize_scrollbar = FALSE
+        trough_shades = { 0.85, 1.0 }
+    }
+}
+
+style "progressbar" {
+    bg[NORMAL]   = "#333842"
+    bg[SELECTED] = @selected_bg_color
+    fg[PRELIGHT] = @selected_fg_color
+    xthickness = 0
+    ythickness = 0
+
+    engine "murrine" {
+        roundness = 100
+        gradient_shades = { 1.0, 1.0, 1.0, 1.0 }
+        trough_shades = { 0.85, 1.0 }
+    }
+}
+
+style "scale" {
+    bg[NORMAL]   = "#333842"
+    bg[PRELIGHT] = "#D4D8DF"
+    bg[SELECTED] = @selected_bg_color
+
+    engine "murrine" {
+        roundness = 100
+        trough_shades = { 0.85, 1.0 }
+    }
+}
+
+style "checkradio" {
+    bg[NORMAL]   = "#181B21"
+    bg[SELECTED] = @selected_bg_color
+    bg[PRELIGHT] = "#2C313A"
+
+    engine "murrine" {
+        roundness = 3
+    }
+}
+
+style "frame" {
+    engine "murrine" {
+        roundness = 6
+    }
+}
+
+# Apply styles
+class "GtkWidget"       style "default"
+class "GtkButton"       style "button"
+class "GtkEntry"        style "entry"
+class "GtkSpinButton"   style "entry"
+class "GtkNotebook"     style "notebook"
+class "GtkMenu"         style "menu"
+class "GtkMenuBar"      style "menubar"
+class "GtkToolbar"      style "toolbar"
+class "GtkScrollbar"    style "scrollbar"
+class "GtkProgressBar"  style "progressbar"
+class "GtkScale"        style "scale"
+class "GtkCheckButton"  style "checkradio"
+class "GtkRadioButton"  style "checkradio"
+class "GtkFrame"        style "frame"
+
+widget_class "*<GtkMenuItem>*" style "menuitem"
+widget "gtk-tooltip*"          style "tooltip"
+widget_class "*.<GtkTreeView>.<GtkButton>" style "treeview-header"

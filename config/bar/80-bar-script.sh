@@ -11,47 +11,6 @@ interval=0
 . ~/.config/statusbar/themes/onedark
 
 
-# weathermodule () {
-# 
-# url="${WTTRURL:-wttr.in}"
-# weatherreport="${XDG_CACHE_HOME:-$HOME/.cache}/weatherreport"
-# 
-# # Get a weather report from 'wttr.in' and save it locally.
-# getforecast() { curl -sf "$url/Aberdeen" > "$weatherreport" || exit 1; }
-# 
-# # Forecast should be updated only once a day.
-# checkforecast() {
-	# [ -s "$weatherreport" ] && [ "$(stat -c %y "$weatherreport" 2>/dev/null |
-		# cut -d' ' -f1)" = "$(date '+%Y-%m-%d')" ]
-# }
-# 
-# getprecipchance() {
-	# echo "$weatherdata" | sed '16q;d' |    # Extract line 16 from file
-		# grep -wo "[0-9]*%" |           # Find a sequence of digits followed by '%'
-		# sort -rn |                     # Sort in descending order
-		# head -1q                       # Extract first line
-# }
-# 
-# getdailyhighlow() {
-	# echo "$weatherdata" | sed '13q;d' |      # Extract line 13 from file
-		# grep -o "m\\([-+]\\)*[0-9]\\+" | # Find temperatures in the format "m<signed number>"
-		# sed 's/[+m]//g' |                # Remove '+' and 'm'
-		# sort -g |                        # Sort in ascending order
-		# sed -e 1b -e '$!d'               # Extract the first and last lines
-# }
-# 
-# readfile() { weatherdata="$(cat "$weatherreport")" ;}
-# 
-# showweather() {
-	# readfile
-	# printf "^c$blue^  %s ^c$white^ %s° ^c$orange^  %s°\n" "$(getprecipchance)" $(getdailyhighlow)
-# }
-# 
-	# checkforecast || getforecast
-	# 
-	# showweather
-# }
-
 cpu() {
 
 	cpu_val=$(grep -o "^[^ ]*" /proc/loadavg)
@@ -61,37 +20,37 @@ cpu() {
 	printf "^c$black^^b$green^ CPU "
 	printf "^c$white^^b$grey^ $cpu_val "
 	printf "^c$white^^b$grey^$t"
-	
+
 }
 
-# disk() {
-# 
-	# printf "^c$pink^^b$black^ 󰋊 "
-	# printf "$(df -h | awk 'NR==4{print $3,$5}')%"
-# 
-# }
+ disk() {
+
+	 printf "^c$pink^^b$black^ 󰋊 "
+	 printf "$(df -h | awk 'NR==4{print $3,$5}')%"
+
+ }
 
 pkg_updates() {
 
 	updates=$(pacman -Qu | wc -l)
-	
+
 	if [ -z "$updates" ]; then
 		printf "^b$black^^c$white^󰏕 "
 	else
 		printf "^b$black^^c$white^󰏕 $updates"
 	fi
-	
+
 }
 
 mem() {
 
-  printf "^c$white^^b$black^  "
+  printf "^c$white^^b$black^  "
   printf "^c$white^$(free -h | awk '/^Mem/ { print $3 }' | sed s/i//g)"
 
 }
 
 netstat() {
-	
+
 	update() {
 	    sum=0
 	    for arg; do
@@ -103,10 +62,10 @@ netstat() {
 	    printf %d\\n "$sum" > "$cache"
 	    printf %d\\n $(( sum - old ))
 	}
-	
+
 	rx=$(update /sys/class/net/[ew]*/statistics/rx_bytes)
 	tx=$(update /sys/class/net/[ew]*/statistics/tx_bytes)
-	
+
 	printf "^b$black^^c$white^󰬦 %4sB 󰬬 %4sB\\n" $(numfmt --to=iec $rx) $(numfmt --to=iec $tx)
 }
 
@@ -118,8 +77,55 @@ elif grep -xq 'down' /sys/class/net/w*/operstate 2>/dev/null ; then
 	grep -xq '0x1003' /sys/class/net/w*/flags && wifiicon="󰤫 " || wifiicon="󰤮 "
 fi
 
-printf "%s%s%s\n" "^c$white^^b$black^$wifiicon" "$(sed "s/down/󰈂/;s/up/󰈀/" /sys/class/net/e*/operstate 2>/dev/null)" "$(sed "s/.*//" /sys/class/net/tun*/operstate 2>/dev/null) "
+printf "%s%s%s\n" "^c$white^^b$black^$wifiicon" "$(sed "s/down/󰈂/;s/up/󰈀/" /sys/class/net/e*/operstate 2>/dev/null)" "$(sed "s/.*//" /sys/class/net/tun*/operstate 2>/dev/null) "
 
+}
+
+battery() {
+	capacity=$(cat /sys/class/power_supply/BAT0/capacity)
+	status=$(cat /sys/class/power_supply/BAT0/status)
+
+	if [ "$status" = "Charging" ]; then
+		icon="^c$green^󰂄"
+	elif [ "$capacity" -ge 90 ]; then
+		icon="^c$green^󰁹"
+	elif [ "$capacity" -ge 80 ]; then
+		icon="^c$green^󰂂"
+	elif [ "$capacity" -ge 70 ]; then
+		icon="^c$green^󰂁"
+	elif [ "$capacity" -ge 60 ]; then
+		icon="^c$white^󰂀"
+	elif [ "$capacity" -ge 50 ]; then
+		icon="^c$white^󰁿"
+	elif [ "$capacity" -ge 40 ]; then
+		icon="^c$white^󰁾"
+	elif [ "$capacity" -ge 30 ]; then
+		icon="^c$white^󰁽"
+	elif [ "$capacity" -ge 20 ]; then
+		icon="^c$red^󰁼"
+	elif [ "$capacity" -ge 10 ]; then
+		icon="^c$red^󰁻"
+	else
+		icon="^c$red^󰂃"
+	fi
+
+	printf "%s ^c$white^%s%%" "$icon" "$capacity"
+}
+
+brightness() {
+	cur=$(cat /sys/class/backlight/intel_backlight/brightness)
+	max=$(cat /sys/class/backlight/intel_backlight/max_brightness)
+	pct=$((cur * 100 / max))
+
+	if [ "$pct" -ge 75 ]; then
+		icon="^c$white^󰃠"
+	elif [ "$pct" -ge 40 ]; then
+		icon="^c$white^󰃟"
+	else
+		icon="^c$white^󰃞"
+	fi
+
+	printf "%s ^c$white^%s%%" "$icon" "$pct"
 }
 
 clock() {
@@ -127,39 +133,30 @@ clock() {
 	printf "^c$black^^b$blue^ $(date '+%a %d %b %I:%M %p')"
 }
 
-
-
 volume() {
-    # get the current audio level as a percentage
     vol=$(pulsemixer --get-volume | awk '{print $1}')
     mute=$(pulsemixer --get-mute | awk '{print $1}')
 
     if [ "$mute" = "1" ]; then
-        icon="^c$red^"
-        echo "$icon ""^c$white^$vol%"
+        printf "^c$red^󰖁 ^c$white^%s%%" "$vol"
     else
         case 1 in
-            $((vol >= 90)) ) icon="^c$red^" ;;
+            $((vol >= 90)) ) icon="^c$red^" ;;
             $((vol >= 30)) ) icon="^c$darkblue^󰕾" ;;
-            $((vol >= 1)) ) icon="^c$white^" ;;
-            * ) echo 󰸈 && exit ;;
+            $((vol >= 1)) ) icon="^c$white^" ;;
+            * ) icon="^c$white^󰸈" ;;
         esac
-        echo "$icon ""$vol%"
+        printf "%s ^c$white^%s%%" "$icon" "$vol"
     fi
 }
 
 while true; do
 
-	[ $interval = 0 ] || [ $(($interval % 3600)) = 0 ] && updates=$(pkg_updates) 
+	[ $interval = 0 ] || [ $(($interval % 3600)) = 0 ] && updates=$(pkg_updates)
 
 	# && weather=$(weathermodule)
-	
+
  interval=$((interval + 1))
 
-	sleep 1 && xsetroot -name "$(volume) $(cpu) $(mem) $(netstat) $(wlan) $(clock) "
+	sleep 1 && xsetroot -name "$(volume) $(brightness) $(cpu) $(mem) $(battery) $(netstat) $(wlan) $(clock) "
 done
-
- 
- 
-
-

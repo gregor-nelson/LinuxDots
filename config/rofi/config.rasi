@@ -1,5 +1,6 @@
 configuration {
   show-icons: true;
+  icon-theme: "Paprius-Dark";
   display-drun: "Applications:";
   display-window: "Windows:";
   drun-display-format: "{name}";

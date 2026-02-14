@@ -1,136 +1,274 @@
-# Luke's lf settings
+# ══════════════════════════════════════════════════════════════════════════════
+# lf Configuration - OneDark Theme (Linux/Termux)
+# Aligned with tmux theme for visual consistency
+# ══════════════════════════════════════════════════════════════════════════════
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Core Settings
+# ─────────────────────────────────────────────────────────────────────────────
 
-# Note on Image Previews
-# For those wanting image previews, like this system, there are four steps to
-# set it up. These are done automatically for LARBS users, but I will state
-# them here for others doing it manually.
-#
-# 1. ueberzug must be installed.
-# 2. The scope file (~/.config/lf/scope for me), must have a command similar to
-#    mine to generate ueberzug images.
-# 3. A `set cleaner` line as below is a cleaner script.
-# 4. lf should be started through a wrapper script (~/.local/bin/lfub for me)
-#    that creates the environment for ueberzug. This command can be be aliased
-#    in your shellrc (`alias lf="lfub") or if set to a binding, should be
-#    called directly instead of normal lf.
-
-# Basic vars
-set shellopts '-eu'
-set ifs "\n"
-set scrolloff 10
 set icons
-set period 1
-set hiddenfiles ".*:*.aux:*.log:*.bbl:*.bcf:*.blg:*.run.xml"
-set cleaner '~/.config/lf/cleaner'
-set previewer '~/.config/lf/scope'
-set autoquit 
+set hidden
+set ignorecase
+set smartcase
+set anchorfind
+set findlen 1
+set incsearch
+set smartdia
+set truncatechar "…"
+set waitmsg "Press any key to continue"
+set timefmt "02 Jan 06 15:04"
+set infotimefmtnew "02 Jan 15:04"
+set infotimefmtold "02 Jan 2006"
+set previewer ~/.config/lf/preview
+set preview
 
-# cmds/functions
-cmd open ${{
-    case $(file --mime-type "$(readlink -f $f)" -b) in
-	application/vnd.openxmlformats-officedocument.spreadsheetml.sheet) localc $fx ;;
-	image/vnd.djvu|application/pdf|application/octet-stream|application/postscript) setsid -f zathura $fx >/dev/null 2>&1 ;;
-        text/*|application/json|inode/x-empty) $EDITOR $fx;;
-	image/x-xcf) setsid -f gimp $f >/dev/null 2>&1 ;;
-	image/svg+xml) display -- $f ;;
-	image/*) rotdir $f | grep -i "\.\(png\|jpg\|jpeg\|gif\|webp\|tif\|ico\)\(_large\)*$" |
-		setsid -f sxiv -aio 2>/dev/null | while read -r file; do
-			[ -z "$file" ] && continue
-			lf -remote "send select \"$file\""
-			lf -remote "send toggle"
-		done &
-		;;
-	audio/*) mpv --audio-display=no $f ;;
-	video/*) setsid -f mpv $f -quiet >/dev/null 2>&1 ;;
-	application/pdf|application/vnd*|application/epub*) setsid -f zathura $fx >/dev/null 2>&1 ;;
-	application/pgp-encrypted) $EDITOR $fx ;;
-	application/javascript) $EDITOR $fx ;;
-	application/vnd.openxmlformats-officedocument.wordprocessingml.document|application/vnd.oasis.opendocument.text) setsid -f lowriter $fx >/dev/null 2>&1 ;;
-	application/vnd.openxmlformats-officedocument.spreadsheetml.sheet|application/octet-stream|application/vnd.oasis.opendocument.spreadsheet|application/vnd.oasis.opendocument.spreadsheet-template) setsid -f localc $fx >/dev/null 2>&1 ;;
-	application/vnd.openxmlformats-officedocument.presentationml.presentation|application/vnd.oasis.opendocument.presentation-template|application/vnd.oasis.opendocument.presentation|application/vnd.ms-powerpoint) setsid -f loimpress $fx >/dev/null 2>&1 ;;
-	application/vnd.oasis.opendocument.graphics|application/vnd.oasis.opendocument.graphics-template) setsid -f lodraw $fx >/dev/null 2>&1 ;;
-	application/vnd.oasis.opendocument.formula) setsid -f lomath $fx >/dev/null 2>&1 ;;
-	application/vnd.oasis.opendocument.database) setsid -f lobase $fx >/dev/null 2>&1 ;;
-        *) for f in $fx; do setsid -f $OPENER $f >/dev/null 2>&1; done;;
+# ─────────────────────────────────────────────────────────────────────────────
+# Color Palette (OneDark - aligned with tmux)
+# ══════════════════════════════════════════════════════════════════════════════
+# black=#1e222a  (30;34;42)    grey=#282c34  (40;44;52)
+# white=#abb2bf  (171;178;191) green=#7eca9c (126;202;156)
+# blue=#7aa2f7   (122;162;247) darkblue=#668ee3 (102;142;227)
+# red=#d47d85    (212;125;133) yellow=#e5c07b (229;192;123)
+# orange=#caaa6a (202;170;106) pink=#c678dd  (198;120;221)
+# cyan=#56b6c2   (86;182;194)  grey_dim=#545862 (84;88;98)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Visual Layout (matching tmux theme)
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Box drawing with themed green border (matching tmux active-pane)
+set nodrawbox
+
+# Layout ratios (1:2:3 gives more preview space for visual impact)
+set ratios 3:4:5
+set info size:time
+set dircounts
+set scrolloff 10
+
+# Cursor styles (green = active, like tmux pane-active-border)
+set cursoractivefmt "\033[7;38;2;126;202;156m"
+set cursorparentfmt "\033[2;38;2;171;178;191m"
+set cursorpreviewfmt "\033[38;2;122;162;247m"
+
+# File operation highlights
+set copyfmt "\033[7;38;2;229;192;123m"
+set cutfmt "\033[7;38;2;212;125;133m"
+set selectfmt "\033[7;38;2;198;120;221m"
+set tagfmt "\033[38;2;122;162;247m"
+
+# Visual mode formatting (inverse pink)
+set visualfmt "\033[7;38;2;198;120;221m"
+
+# Menu styling (OneDark themed)
+set menufmt "\033[38;2;171;178;191m"
+set menuheaderfmt "\033[1;38;2;122;162;247m"
+set menuselectfmt "\033[7;38;2;126;202;156m"
+
+# Error formatting (red)
+set errorfmt "\033[38;2;212;125;133m%s\033[0m"
+set numberfmt "\033[38;2;171;178;191m"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Status Bar Styling (matching tmux pill structure)
+#
+# tmux pill pattern: #[fg=black,bg=color] LABEL #[fg=white,bg=grey] value
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Color variables for reference (inline RGB values required)
+# Use grey (40;44;52) for value backgrounds, black (30;34;42) for label text
+
+# Top prompt: clean pill-box design
+# Structure: green divider | blue dir pill | pink file pill
+set promptfmt "\033[1;48;2;126;202;156m\033[38;2;30;34;42m 󰉋 \033[0m\033[48;2;40;44;52m\033[38;2;171;178;191m %w \033[0m \033[48;2;40;44;52m\033[38;2;198;120;221m 󰈤 \033[38;2;171;178;191m%f \033[0m"
+
+# Bottom left status: clean pills for permissions, size, time
+# %p=permissions, %s=size, %t=mod time
+set statfmt "\033[48;2;40;44;52m\033[38;2;126;202;156m 󰌾 \033[38;2;171;178;191m%p\033[0m \033[48;2;40;44;52m\033[38;2;122;162;247m 󰋊 \033[38;2;171;178;191m%s \033[0m \033[48;2;40;44;52m\033[38;2;86;182;194m 󰔠 \033[38;2;171;178;191m%t \033[0m"
+
+# Bottom right ruler with spaced pills and clear visual hierarchy
+# %a=keys, %p=progress, %m=cut, %c=copy, %s=selected, %f=filter, %i=index, %t=total, %d=disk
+# Pipe | separates sections - empty sections are hidden
+set rulerfmt "\033[2;38;2;171;178;191m%a\033[0m|\033[38;2;122;162;247m%p\033[0m|\033[48;2;40;44;52m\033[38;2;212;125;133m ✂ \033[38;2;171;178;191m%m \033[0m|\033[48;2;40;44;52m\033[38;2;202;170;106m  \033[38;2;171;178;191m%c \033[0m|\033[48;2;40;44;52m\033[38;2;198;120;221m 󰒅 \033[38;2;171;178;191m%s \033[0m|\033[48;2;40;44;52m\033[38;2;122;162;247m  \033[38;2;171;178;191m%f \033[0m|\033[48;2;40;44;52m\033[38;2;126;202;156m  \033[38;2;171;178;191m%i/%t \033[0m|\033[48;2;40;44;52m\033[38;2;122;162;247m 󰋊 \033[38;2;171;178;191m%d \033[0m"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Keybindings
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Clear defaults
+map d
+map y
+map p
+map c
+map m
+
+# Navigation
+map <enter> open
+map <backspace> updir
+map <backspace2> updir
+map H updir
+map L open
+map J half-down
+map K half-up
+map gg top
+map G bottom
+map <home> top
+map <end> bottom
+
+# Selection
+map <space> :toggle; down
+map v invert
+map V invert-below
+map a glob-select *
+map A glob-unselect *
+
+# File Operations
+map y copy
+map x cut
+map p paste
+map <delete> delete
+map <f2> rename
+map <f5> reload
+map <f7> push :mkdir<space>
+map r rename
+map R bulk-rename
+
+# Create new
+map n push :touch<space>
+map N push :mkdir<space>
+
+# Windows-style bindings (dual mappings)
+map <c-c> copy
+map <c-x> cut
+map <c-v> paste
+map <c-a> glob-select *
+map <c-n> push :touch<space>
+map <a-n> push :mkdir<space>
+map <a-enter> $less "$f"
+
+# Toggle hidden files
+map . set hidden!
+map <a-.> set hidden!
+
+# Search and filter
+map / search
+map ? search-back
+map f find
+map F find-back
+map ; find-next
+map , find-prev
+map <c-f> search
+map <f3> :filter
+
+# Bookmarks
+map gh cd ~
+map gd cd ~/Downloads
+map gD cd ~/Documents
+map gp cd ~/Pictures
+map gv cd ~/Videos
+map gm cd ~/Music
+map gt cd ~/Desktop
+map g. cd ~/.config/lf
+
+# Shell and editor
+map e $nvim "$f"
+map E $nvim .
+map w $$SHELL
+map W $$SHELL
+map S $$SHELL
+
+# Open with specific app
+map o &xdg-open "$f"
+map O push :open-with<space>
+
+# Quick actions
+map i $less "$f"
+map I $nvim -R "$f"
+map <c-r> reload
+map <esc> :clear; unselect
+map u :clear; unselect
+map zh set hidden!
+map zr set reverse!
+map zn set info; set sortby natural
+map zs set info size; set sortby size
+map zt set info time; set sortby time
+map za set info size:time
+
+# Copy path/name to clipboard
+map Yy $printf '%s' "$f" | termux-clipboard-set
+map Yd $printf '%s' "$(dirname "$f")" | termux-clipboard-set
+map Yn $printf '%s' "$(basename "$f")" | termux-clipboard-set
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Commands
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Open everything in neovim (Enter/Right arrow/l)
+cmd open $nvim "$f"
+
+# Create directory
+cmd mkdir %mkdir "$@"
+
+# Create file
+cmd touch %touch "$@"
+
+# Delete with confirmation
+cmd delete ${{
+    printf "Delete? [y/N] "
+    for f in $fx; do
+        printf '  %s\n' "$f"
+    done
+    printf "> "
+    read ans
+    case "$ans" in
+        y|Y) rm -ri -- $fx ;;
     esac
 }}
 
-cmd mkdir $mkdir -p "$(echo $* | tr ' ' '\ ')"
+# Open with specific program
+cmd open-with $"$@" "$f"
 
-cmd extract ${{
-	clear; tput cup $(($(tput lines)/3)); tput bold
-	set -f
-	printf "%s\n\t" "$fx"
-	printf "extract?[y/N]"
-	read ans
-	[ $ans = "y" ] && aunpack $fx
+# Git status display
+cmd git-status ${{
+    if test -d .git; then
+        printf '\n'
+        printf '\033[38;2;122;162;247m──────────────────────────────────────\033[0m\n'
+        printf '\033[38;2;126;202;156m  Git Status\033[0m\n'
+        printf '\033[38;2;122;162;247m──────────────────────────────────────\033[0m\n'
+        git status --short
+        printf '\n'
+        printf '\033[38;2;171;178;191m  Branch:\033[0m \033[38;2;126;202;156m'
+        git branch --show-current
+        printf '\033[0m\n'
+    else
+        printf '\033[38;2;212;125;133m  Not a git repository\033[0m\n'
+    fi
 }}
 
-cmd delete ${{
-	clear; tput cup $(($(tput lines)/3)); tput bold
-	set -f
-	printf "%s\n\t" "$fx"
-	printf "delete?[y/N]"
-	read ans
-	[ $ans = "y" ] && rm -rf -- $fx
+# Show git log
+cmd git-log ${{
+    if test -d .git; then
+        git log --oneline -10
+    else
+        echo "Not a git repository"
+    fi
 }}
 
-cmd moveto ${{
-	clear; tput cup $(($(tput lines)/3)); tput bold
-	set -f
-	clear; echo "Move to where?"
-	dest="$(sed -e 's/\s*#.*//' -e '/^$/d' -e 's/^\S*\s*//' ${XDG_CONFIG_HOME:-$HOME/.config}/shell/bm-dirs | fzf | sed 's|~|$HOME|')" &&
-	for x in $fx; do
-		eval mv -iv \"$x\" \"$dest\"
-	done &&
-	notify-send "🚚 File(s) moved." "File(s) moved to $dest."
+map gs git-status
+map gl git-log
+
+# ─────────────────────────────────────────────────────────────────────────────
+# On directory change - show git branch in title
+# ─────────────────────────────────────────────────────────────────────────────
+
+cmd on-cd &{{
+    if test -d .git; then
+        branch=$(git branch --show-current 2>/dev/null)
+        printf '\033]0;lf - %s [%s]\007' "$PWD" "$branch"
+    else
+        printf '\033]0;lf - %s\007' "$PWD"
+    fi
 }}
 
-cmd copyto ${{
-	clear; tput cup $(($(tput lines)/3)); tput bold
-	set -f
-	clear; echo "Copy to where?"
-	dest="$(sed -e 's/\s*#.*//' -e '/^$/d' -e 's/^\S*\s*//' ${XDG_CONFIG_HOME:-$HOME/.config}/shell/bm-dirs | fzf | sed 's|~|$HOME|')" &&
-	for x in $fx; do
-		eval cp -ivr \"$x\" \"$dest\"
-	done &&
-	notify-send "📋 File(s) copied." "File(s) copies to $dest."
-}}
-
-cmd setbg "$1"
-cmd bulkrename $vidir
-
-# Bindings
-map <c-f> $lf -remote "send $id select \"$(fzf)\""
-map J $lf -remote "send $id cd $(sed -e 's/\s*#.*//' -e '/^$/d' -e 's/^\S*\s*//' ${XDG_CONFIG_HOME:-$HOME/.config}/shell/bm-dirs | fzf)"
-map gh
-map g top
-map D delete
-map E extract
-map C copyto
-map M moveto
-map <c-n> push :mkdir<space>
-map <c-r> reload
-map <c-s> set hidden!
-map <enter> shell
-map x $$f
-map X !$f
-map o &mimeopen $f
-map O $mimeopen --ask $f
-
-map A rename # at the very end
-map c push A<c-u> # new rename
-map I push A<c-a> # at the very beginning
-map i push A<a-b><a-b><a-f> # before extension
-map a push A<a-b> # after extension
-map B bulkrename
-map b $setbg $f
-
-map <c-e> down
-map <c-y> up
-map V push :!nvim<space>
-
-map W $setsid -f $TERMINAL >/dev/null 2>&1
-
-map Y $printf "%s" "$fx" | xclip -selection clipboard
+# Run on startup
+on-cd

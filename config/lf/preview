@@ -1,0 +1,113 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+# lf previewer - OneDark themed (Linux/Termux)
+
+file="$1"
+ext="${file##*.}"
+filename="${file##*/}"
+
+# Colors (canonical OneDark palette)
+C_GREEN='\033[38;2;126;202;156m'
+C_BLUE='\033[38;2;122;162;247m'
+C_RED='\033[38;2;212;125;133m'
+C_YELLOW='\033[38;2;229;192;123m'
+C_ORANGE='\033[38;2;202;170;106m'
+C_PINK='\033[38;2;198;120;221m'
+C_CYAN='\033[38;2;86;182;194m'
+C_WHITE='\033[38;2;171;178;191m'
+C_DIM='\033[38;2;84;88;98m'
+C_RESET='\033[0m'
+
+header() {
+    printf "${1} ${C_GREEN}%s: %s${C_RESET}\n" "$2" "$filename"
+    printf "${C_DIM}────────────────────────────────────────${C_RESET}\n"
+}
+
+filesize() {
+    local size
+    size=$(stat -c %s "$file" 2>/dev/null || wc -c < "$file")
+    printf "${C_WHITE}Size: %s bytes${C_RESET}\n" "$size"
+}
+
+# Directory
+if [ -d "$file" ]; then
+    header "$C_BLUE" "Directory"
+    ls --color=always "$file" | head -50
+    count=$(ls -1 "$file" 2>/dev/null | wc -l)
+    [ "$count" -gt 50 ] && printf "${C_DIM}... (showing first 50 of %s items)${C_RESET}\n" "$count"
+    exit 0
+fi
+
+# Archives
+case "${ext,,}" in
+    tar|tgz|gz|bz2|xz|zip|7z|rar|zst|tbz2)
+        header "$C_ORANGE" "Archive"
+        filesize
+        printf "${C_WHITE}Type: %s archive${C_RESET}\n" "$ext"
+        exit 0
+        ;;
+esac
+
+# Images
+case "${ext,,}" in
+    jpg|jpeg|png|gif|bmp|webp|ico|svg|tif|tiff|psd)
+        header "$C_PINK" "Image"
+        filesize
+        printf "${C_WHITE}Type: %s image${C_RESET}\n" "$ext"
+        exit 0
+        ;;
+esac
+
+# Video
+case "${ext,,}" in
+    mp4|mkv|avi|mov|wmv|flv|webm|m4v|mpg|mpeg)
+        header "$C_PINK" "Video"
+        filesize
+        printf "${C_WHITE}Type: %s video${C_RESET}\n" "$ext"
+        exit 0
+        ;;
+esac
+
+# Audio
+case "${ext,,}" in
+    mp3|flac|wav|ogg|m4a|aac|wma|opus)
+        header "$C_CYAN" "Audio"
+        filesize
+        printf "${C_WHITE}Type: %s audio${C_RESET}\n" "$ext"
+        exit 0
+        ;;
+esac
+
+# PDF
+case "${ext,,}" in
+    pdf)
+        header "$C_RED" "PDF"
+        filesize
+        exit 0
+        ;;
+esac
+
+# Binary/executable
+case "${ext,,}" in
+    so|dylib|o|a)
+        header "$C_GREEN" "Binary"
+        filesize
+        printf "${C_WHITE}Type: %s${C_RESET}\n" "$ext"
+        exit 0
+        ;;
+esac
+
+# Check if file is binary
+if file -b --mime-encoding "$file" 2>/dev/null | grep -q binary; then
+    header "$C_GREEN" "Binary"
+    filesize
+    file -b "$file"
+    exit 0
+fi
+
+# Text/code files - try bat first, then cat with line numbers
+if command -v bat >/dev/null 2>&1; then
+    bat --color=always --style=numbers --theme="OneHalfDark" --paging=never --line-range=:200 "$file" 2>/dev/null && exit 0
+fi
+
+cat -n "$file" 2>/dev/null | head -200

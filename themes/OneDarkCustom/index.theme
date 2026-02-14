@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=X-GNOME-Metatheme
+Name=OneDarkCustom
+Comment=A custom One Dark theme based on a terminal color palette
+Encoding=UTF-8
+
+[X-GNOME-Metatheme]
+GtkTheme=OneDarkCustom
+MetacityTheme=OneDarkCustom
+IconTheme=Adwaita
